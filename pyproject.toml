@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "school-incident-tracker"
+version = "0.1.0"
+description = ""
+authors = ["GersonMJL <gersonmjl@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.1.3"
+psycopg2 = "^2.9.10"
+django-crispy-forms = "^2.3"
+crispy-bootstrap5 = "^2024.10"
+django-widget-tweaks = "^1.5.0"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

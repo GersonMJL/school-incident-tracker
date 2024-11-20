@@ -1,0 +1,7 @@
+<h1>Incident Types</h1>
+<a href="{% url 'add_incident_type' %}">Add Incident Type</a>
+<ul>
+  {% for incident_type in incident_types %}
+  <li>{{ incident_type.name }}</li>
+  {% endfor %}
+</ul>

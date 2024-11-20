@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+  <h1>Create Incident Report</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form|crispy }}
+    <input type="submit" value="Submit" class="btn btn-success">
+  </form>
+</div>
+
+<!-- Styles -->
+<style>
+  .searchable-select-container {
+    position: relative;
+  }
+
+  .searchable-select-container input {
+    width: 100%;
+    padding-right: 2rem;
+    /* Space for the dropdown arrow */
+  }
+
+  .searchable-select-container::after {
+    content: '';
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #6c757d;
+    pointer-events: none;
+  }
+
+  .searchable-select-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    z-index: 1000;
+    margin-top: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .searchable-select-dropdown.show {
+    display: block;
+  }
+
+  .searchable-option {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+  }
+
+  .searchable-option:hover {
+    background-color: #f8f9fa;
+  }
+
+  .searchable-option.selected {
+    background-color: #e9ecef;
+  }
+
+  select[data-search="true"] {
+    display: none !important;
+  }
+</style>
+
+<!-- Scripts -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchableSelects = document.querySelectorAll('select[data-search="true"]');
+
+    searchableSelects.forEach(select => {
+      // Container and input elements
+      const container = document.createElement('div');
+      container.className = 'searchable-select-container';
+
+      const visibleInput = document.createElement('input');
+      visibleInput.type = 'text';
+      visibleInput.className = 'form-control';
+      visibleInput.placeholder = select.getAttribute('placeholder') || `Select ${select.name}...`;
+      visibleInput.autocomplete = 'off';
+
+      const dropdown = document.createElement('div');
+      dropdown.className = 'searchable-select-dropdown';
+
+      // Append elements to DOM
+      select.parentNode.insertBefore(container, select);
+      container.append(visibleInput, dropdown, select);
+
+      const options = Array.from(select.options);
+      let selectedOption = select.value ? options.find(opt => opt.value === select.value) : null;
+
+      const updateDropdownOptions = (searchTerm = '') => {
+        dropdown.innerHTML = '';
+        options
+          .filter(option => option.value && option.text.toLowerCase().includes(searchTerm.toLowerCase()))
+          .forEach(option => {
+            const div = document.createElement('div');
+            div.className = 'searchable-option';
+            if (selectedOption === option) div.classList.add('selected');
+            div.textContent = option.text;
+            div.dataset.value = option.value;
+
+            div.addEventListener('click', () => {
+              select.value = option.value;
+              visibleInput.value = option.text;
+              selectedOption = option;
+              closeDropdown();
+              select.dispatchEvent(new Event('change'));
+            });
+
+            dropdown.appendChild(div);
+          });
+      };
+
+      const closeDropdown = () => {
+        dropdown.classList.remove('show');
+        document.removeEventListener('click', outsideClickHandler);
+      };
+
+      const outsideClickHandler = e => {
+        if (!container.contains(e.target)) closeDropdown();
+      };
+
+      // Event listeners
+      visibleInput.addEventListener('focus', () => {
+        updateDropdownOptions(visibleInput.value);
+        dropdown.classList.add('show');
+        document.addEventListener('click', outsideClickHandler);
+      });
+
+      visibleInput.addEventListener('input', e => updateDropdownOptions(e.target.value));
+
+      visibleInput.addEventListener('keydown', e => {
+        const options = dropdown.querySelectorAll('.searchable-option');
+        const currentIndex = Array.from(options).findIndex(opt => opt.classList.contains('selected'));
+
+        switch (e.key) {
+          case 'ArrowDown':
+            e.preventDefault();
+            if (currentIndex < options.length - 1) {
+              options[currentIndex]?.classList.remove('selected');
+              options[currentIndex + 1]?.classList.add('selected');
+              options[currentIndex + 1]?.scrollIntoView({ block: 'nearest' });
+            }
+            break;
+          case 'ArrowUp':
+            e.preventDefault();
+            if (currentIndex > 0) {
+              options[currentIndex]?.classList.remove('selected');
+              options[currentIndex - 1]?.classList.add('selected');
+              options[currentIndex - 1]?.scrollIntoView({ block: 'nearest' });
+            }
+            break;
+          case 'Enter':
+            e.preventDefault();
+            const selected = dropdown.querySelector('.searchable-option.selected');
+            if (selected) selected.click();
+            break;
+          case 'Escape':
+            closeDropdown();
+            break;
+        }
+      });
+
+      if (selectedOption) visibleInput.value = selectedOption.text;
+      if (select.required) visibleInput.required = true;
+    });
+  });
+</script>
+
+{% endblock %}
