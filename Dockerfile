@@ -2,13 +2,20 @@
 FROM python:3.12
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
 # Set the working directory inside the container
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install Poetry
-RUN pip install --no-cache-dir poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+ENV PATH="${PATH}:/root/.local/bin"
 
 # Copy the application code
 COPY . .
@@ -17,8 +24,7 @@ COPY . .
 RUN poetry config virtualenvs.create false \
     && poetry install --no-interaction --no-ansi
 
-# Expose port 8000 for the Django app
-EXPOSE 8000
+RUN python app/manage.py collectstatic --noinput
 
 # Command to run the Django app
-CMD python manage.py runserver 0.0.0.0:8000
+CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "app.wsgi:application"]
