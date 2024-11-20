@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Student, IncidentType
 from .forms import StudentForm, IncidentTypeForm, IncidentReportForm
+from django.contrib import messages
+from .utils import generate_incident_report_pdf, upload_pdf_to_s3
 
 
 @login_required
@@ -44,13 +46,29 @@ def add_incident_type(request):
 
 @login_required
 def create_incident_report(request):
-    form = IncidentReportForm()
-
     if request.method == "POST":
         form = IncidentReportForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect("list_students")
+            # Save the incident report
+            incident_report = form.save()
+
+            try:
+                # Generate PDF
+                pdf_buffer = generate_incident_report_pdf(incident_report)
+
+                # Upload to S3
+                upload_pdf_to_s3(pdf_buffer, incident_report)
+
+                messages.success(
+                    request, "Incident report created and PDF stored successfully."
+                )
+                return redirect("list_students")
+
+            except Exception as e:
+                messages.error(request, f"Error creating PDF: {str(e)}")
+                # Optionally, you might want to delete the incident report if PDF generation fails
+                incident_report.delete()
     else:
         form = IncidentReportForm()
+
     return render(request, "incidents/incident_report_form.html", {"form": form})
