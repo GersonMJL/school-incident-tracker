@@ -26,6 +26,9 @@ class IncidentReport(models.Model):
     description = models.TextField()
     pdf_file = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        "users.AdminUser", on_delete=models.SET_NULL, null=True
+    )
 
     def __str__(self):
         return f"Incident for {self.student.name} - {self.incident_type.name}"

@@ -3,7 +3,11 @@ from django.shortcuts import render, redirect
 from .models import Student, IncidentType
 from .forms import StudentForm, IncidentTypeForm, IncidentReportForm
 from django.contrib import messages
-from .utils import generate_incident_report_pdf, upload_pdf_to_s3
+from .utils import (
+    generate_incident_report_pdf,
+    upload_pdf_to_s3,
+    send_incident_report_email,
+)
 
 
 @login_required
@@ -50,6 +54,7 @@ def create_incident_report(request):
         form = IncidentReportForm(request.POST)
         if form.is_valid():
             # Save the incident report
+            form.instance.created_by = request.user
             incident_report = form.save()
 
             try:
@@ -58,6 +63,9 @@ def create_incident_report(request):
 
                 # Upload to S3
                 upload_pdf_to_s3(pdf_buffer, incident_report)
+
+                # Send email with PDF attachment
+                send_incident_report_email(incident_report, pdf_buffer)
 
                 messages.success(
                     request, "Incident report created and PDF stored successfully."
@@ -68,6 +76,7 @@ def create_incident_report(request):
                 messages.error(request, f"Error creating PDF: {str(e)}")
                 # Optionally, you might want to delete the incident report if PDF generation fails
                 incident_report.delete()
+
     else:
         form = IncidentReportForm()
 
