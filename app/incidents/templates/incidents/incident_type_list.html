@@ -1,7 +1,17 @@
-<h1>Incident Types</h1>
-<a href="{% url 'add_incident_type' %}">Add Incident Type</a>
-<ul>
-  {% for incident_type in incident_types %}
-  <li>{{ incident_type.name }}</li>
-  {% endfor %}
-</ul>
+{% extends "base.html" %}
+
+{% block title %}Incident Types{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <h1 class="mb-4">Incident Types</h1>
+    <a href="{% url 'add_incident_type' %}" class="btn btn-primary mb-3">Add Incident Type</a>
+    <ul class="list-group">
+      {% for incident_type in incident_types %}
+      <li class="list-group-item">{{ incident_type.name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
