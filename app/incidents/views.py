@@ -1,13 +1,17 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Student, IncidentType
+from .models import Student, IncidentType, IncidentReport
 from .forms import StudentForm, IncidentTypeForm, IncidentReportForm
+from django.core.paginator import Paginator
 from django.contrib import messages
 from .utils import (
     generate_incident_report_pdf,
     upload_pdf_to_s3,
     send_incident_report_email,
 )
+from django.db.models import Q
+from .models import IncidentReport
+from .forms import IncidentFilterForm
 
 
 @login_required
@@ -81,3 +85,52 @@ def create_incident_report(request):
         form = IncidentReportForm()
 
     return render(request, "incidents/incident_report_form.html", {"form": form})
+
+
+@login_required
+def incident_list(request):
+    # Initialize the filter form
+    filter_form = IncidentFilterForm(request.GET)
+
+    # Start with all incidents
+    queryset = IncidentReport.objects.select_related(
+        "student", "incident_type", "created_by"
+    ).order_by("-created_at")
+
+    # Apply filters if form is valid
+    if filter_form.is_valid():
+        # Filter by incident type
+        if filter_form.cleaned_data["incident_type"]:
+            queryset = queryset.filter(
+                incident_type=filter_form.cleaned_data["incident_type"]
+            )
+
+        # Filter by date range
+        if filter_form.cleaned_data["date_from"]:
+            queryset = queryset.filter(
+                created_at__date__gte=filter_form.cleaned_data["date_from"]
+            )
+        if filter_form.cleaned_data["date_to"]:
+            queryset = queryset.filter(
+                created_at__date__lte=filter_form.cleaned_data["date_to"]
+            )
+
+        # Search by student name
+        if filter_form.cleaned_data["search"]:
+            search_query = filter_form.cleaned_data["search"]
+            queryset = queryset.filter(
+                Q(student__name__icontains=search_query)
+                | Q(description__icontains=search_query)
+            )
+
+    # Pagination
+    paginator = Paginator(queryset, 10)  # Show 10 incidents per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "incidents": page_obj,
+        "filter_form": filter_form,
+        "title": "Incident Reports",
+    }
+    return render(request, "incidents/incident_list.html", context)

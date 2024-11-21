@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row mb-4">
+  <div class="col">
+    <h1 class="h2 mb-0">Lista de Ocorrências</h1>
+  </div>
+</div>
+
+<!-- Filtros -->
+<div class="card mb-4">
+  <div class="card-body">
+    <form method="get" class="row g-3">
+      <div class="col-md-3">
+        {{ filter_form.incident_type.label_tag }}
+        {{ filter_form.incident_type }}
+      </div>
+      <div class="col-md-2">
+        {{ filter_form.date_from.label_tag }}
+        {{ filter_form.date_from }}
+      </div>
+      <div class="col-md-2">
+        {{ filter_form.date_to.label_tag }}
+        {{ filter_form.date_to }}
+      </div>
+      <div class="col-md-3">
+        {{ filter_form.search.label_tag }}
+        {{ filter_form.search }}
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">Aplicar Filtros</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Lista de Ocorrências -->
+{% if incidents %}
+<div class="row">
+  {% for incident in incidents %}
+  <div class="col-12 mb-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <h5 class="card-title">{{ incident.student.name }}</h5>
+          <span class="badge bg-primary">{{ incident.incident_type.name }}</span>
+        </div>
+        <h6 class="card-subtitle mb-2 text-muted">
+          Registrado em {{ incident.created_at|date:"d 'de' F 'de' Y" }}
+        </h6>
+        <p class="card-text">{{ incident.description|truncatewords:50 }}</p>
+        <div class="d-flex justify-content-between align-items-center">
+          <small class="text-muted">
+            Registrado por: {{ incident.created_by.username }}
+          </small>
+          {% if incident.pdf_file %}
+          <a href="{{ incident.pdf_file }}" class="btn btn-sm btn-outline-primary" target="_blank">
+            <i class="bi bi-file-pdf"></i> Ver Relatório
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Paginação -->
+{% if incidents.paginator.num_pages > 1 %}
+<nav aria-label="Navegação de página" class="mt-4">
+  <ul class="pagination justify-content-center">
+    {% if incidents.has_previous %}
+    <li class="page-item">
+      <a class="page-link"
+        href="?page={{ incidents.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+        Anterior
+      </a>
+    </li>
+    {% endif %}
+
+    {% for num in incidents.paginator.page_range %}
+    {% if incidents.number == num %}
+    <li class="page-item active">
+      <span class="page-link">{{ num }}</span>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link"
+        href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+        {{ num }}
+      </a>
+    </li>
+    {% endif %}
+    {% endfor %}
+
+    {% if incidents.has_next %}
+    <li class="page-item">
+      <a class="page-link"
+        href="?page={{ incidents.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+        Próximo
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% else %}
+<div class="alert alert-info" role="alert">
+  Nenhum relatório de incidente encontrado com os critérios especificados.
+</div>
+{% endif %}
+{% endblock %}

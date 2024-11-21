@@ -95,19 +95,22 @@ def upload_pdf_to_s3(pdf_buffer, incident_report):
     brt_timezone = pytz.timezone("America/Sao_Paulo")
     localized_created_at = incident_report.created_at.astimezone(brt_timezone)
 
-    # Generate a unique filename
-    filename = f"incident_reports/{incident_report.student.name}_{localized_created_at.strftime('%d-%m-%Y_%H-%M-%S')}.pdf"
+    # Generate a s3 url for the file
+    filename = f"{incident_report.student.name}_{localized_created_at.strftime('%d%m%Y_%H%M%S')}.pdf"
+    pdf_url = (
+        f"https://cepa-incidents.s3.sa-east-1.amazonaws.com/incident_reports/{filename}"
+    )
 
     # Upload to S3
     s3_client.upload_fileobj(
         s3_buffer,
         settings.AWS_STORAGE_BUCKET_NAME,
-        filename,
+        f"incident_reports/{filename}",
         ExtraArgs={"ContentType": "application/pdf"},
     )
 
-    # Store the S3 file path in the model
-    incident_report.pdf_file = filename
+    # Store the S3 file url in the model
+    incident_report.pdf_file = pdf_url
     incident_report.save()
 
 

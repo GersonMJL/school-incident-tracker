@@ -24,7 +24,9 @@ class IncidentReport(models.Model):
         IncidentType, on_delete=models.SET_NULL, null=True
     )
     description = models.TextField()
-    pdf_file = models.CharField(max_length=255, null=True, blank=True)
+    pdf_file = models.CharField(
+        max_length=255, null=True, blank=True
+    )  # URL to PDF file
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
         "users.AdminUser", on_delete=models.SET_NULL, null=True
