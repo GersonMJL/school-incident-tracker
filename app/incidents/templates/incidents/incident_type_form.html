@@ -2,17 +2,17 @@
 
 {% load crispy_forms_tags %}
 
-{% block title %}Add Incident Type{% endblock %}
+{% block title %}Adicionar Tipo de Ocorrência{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-md-6">
-    <h1 class="mb-4">Add Incident Type</h1>
+    <h1 class="mb-4">Adicionar Tipo de Ocorrência</h1>
     <form method="post">
       {% csrf_token %}
       {{ form|crispy }}
       <div class="d-grid">
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-primary">Salvar</button>
       </div>
     </form>
   </div>

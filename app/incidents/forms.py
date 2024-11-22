@@ -8,6 +8,12 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ["name", "email", "parent_email", "school_id"]
+        labels = {
+            "name": "Nome",
+            "email": "Email",
+            "parent_email": "Email do responsável",
+            "school_id": "Matrícula",
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -20,6 +26,7 @@ class IncidentTypeForm(forms.ModelForm):
     class Meta:
         model = IncidentType
         fields = ["name"]
+        labels = {"name": "Nome de ocorrência"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -31,6 +38,7 @@ class IncidentTypeForm(forms.ModelForm):
 class IncidentReportForm(forms.ModelForm):
     student = forms.ModelChoiceField(
         queryset=Student.objects.all(),
+        label="Estudante",
         widget=forms.Select(
             attrs={"class": "form-select searchable-select", "data-search": "true"}
         ),
@@ -39,6 +47,11 @@ class IncidentReportForm(forms.ModelForm):
     class Meta:
         model = IncidentReport
         fields = ["student", "incident_type", "description"]
+        labels = {
+            "incident_type": "Tipo de ocorrência",
+            "description": "Descrição",
+            "student": "Estudante",
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -51,6 +64,7 @@ class IncidentFilterForm(forms.Form):
     incident_type = forms.ModelChoiceField(
         queryset=IncidentType.objects.all(),
         required=False,
+        label="Tipo de ocorrência",
         empty_label="Todos os tipos",
         widget=forms.Select(attrs={"class": "form-select"}),
     )
@@ -66,7 +80,8 @@ class IncidentFilterForm(forms.Form):
     )
     search = forms.CharField(
         required=False,
+        label="Pesquisar aluno",
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Pesquise por matrícula..."}
+            attrs={"class": "form-control", "placeholder": "Pesquise por aluno..."}
         ),
     )

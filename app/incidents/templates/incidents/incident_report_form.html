@@ -4,12 +4,12 @@
 {% block content %}
 
 <div class="container">
-  <h1>Create Incident Report</h1>
+  <h1>Criar ocorrência</h1>
   <form method="post">
     {% csrf_token %}
     {{ form.media }}
     {{ form|crispy }}
-    <input type="submit" value="Submit" class="btn btn-success">
+    <input type="submit" value="Salvar" class="btn btn-success">
   </form>
 </div>
 

@@ -31,8 +31,24 @@
               href="{% url 'create_incident_report' %}">Criar ocorrência</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'create_incident_report' %}active{% endif %}"
-              href="{% url 'create_incident_report' %}">Criar ocorrência</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'incident_list' %}active{% endif %}"
+              href="{% url 'incident_list' %}">Listar ocorrências</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'list_students' %}active{% endif %}"
+              href="{% url 'list_students' %}">Estudantes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'add_student' %}active{% endif %}"
+              href="{% url 'add_student' %}">Adicionar Estudante</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'list_incident_types' %}active{% endif %}"
+              href="{% url 'list_incident_types' %}">Tipos de Ocorrências</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'add_incident_type' %}active{% endif %}"
+              href="{% url 'add_incident_type' %}">Adicionar Tipo de Ocorrência</a>
           </li>
         </ul>
       </div>

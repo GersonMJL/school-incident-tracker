@@ -120,7 +120,7 @@ def incident_list(request):
             search_query = filter_form.cleaned_data["search"]
             queryset = queryset.filter(
                 Q(student__name__icontains=search_query)
-                | Q(description__icontains=search_query)
+                | Q(student__school_id__icontains=search_query)
             )
 
     # Pagination
