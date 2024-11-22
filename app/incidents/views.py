@@ -106,14 +106,14 @@ def incident_list(request):
             )
 
         # Filter by date range
-        if filter_form.cleaned_data["date_from"]:
-            queryset = queryset.filter(
-                created_at__date__gte=filter_form.cleaned_data["date_from"]
-            )
-        if filter_form.cleaned_data["date_to"]:
-            queryset = queryset.filter(
-                created_at__date__lte=filter_form.cleaned_data["date_to"]
-            )
+        # if filter_form.cleaned_data["date_from"]:
+        #     queryset = queryset.filter(
+        #         created_at__date__gte=filter_form.cleaned_data["date_from"]
+        #     )
+        # if filter_form.cleaned_data["date_to"]:
+        #     queryset = queryset.filter(
+        #         created_at__date__lte=filter_form.cleaned_data["date_to"]
+        #     )
 
         # Search by student name
         if filter_form.cleaned_data["search"]:

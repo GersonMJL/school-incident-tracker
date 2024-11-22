@@ -13,23 +13,15 @@
 <div class="card mb-4">
   <div class="card-body">
     <form method="get" class="row g-3">
-      <div class="col-md-3">
+      <div class="col-md-4">
         {{ filter_form.incident_type.label_tag }}
         {{ filter_form.incident_type }}
       </div>
-      <div class="col-md-2">
-        {{ filter_form.date_from.label_tag }}
-        {{ filter_form.date_from }}
-      </div>
-      <div class="col-md-2">
-        {{ filter_form.date_to.label_tag }}
-        {{ filter_form.date_to }}
-      </div>
-      <div class="col-md-3">
+      <div class="col-md-5">
         {{ filter_form.search.label_tag }}
         {{ filter_form.search }}
       </div>
-      <div class="col-md-2 d-flex align-items-end">
+      <div class="col-md-3 d-flex align-items-end">
         <button type="submit" class="btn btn-primary w-100">Aplicar Filtros</button>
       </div>
     </form>
