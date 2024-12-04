@@ -1,42 +1,28 @@
+from users.models import SchoolAdmin
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from .models import AdminUser
+from users.forms import SchoolAdminPageForm
 
 
-class AdminUserAdmin(UserAdmin):
-    model = AdminUser
-    list_display = (
-        "email",
-        "is_active",
-        "is_staff",
-        "is_superuser",
-    )
-    list_filter = ("is_active", "is_staff", "is_superuser")
-    search_fields = ("email", "first_name", "last_name")
-    ordering = ("email",)
-    fieldsets = (
-        (None, {"fields": ("email", "password")}),
-        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser")}),
-        ("Important dates", {"fields": ("last_login",)}),
-    )
-    add_fieldsets = (
-        (
-            None,
-            {
-                "classes": ("wide",),
-                "fields": (
-                    "email",
-                    "password1",
-                    "password2",
-                    "first_name",
-                    "last_name",
-                    "is_active",
-                    "is_staff",
-                    "is_superuser",
-                ),
-            },
-        ),
-    )
+# class SchoolAdminAdmin(admin.ModelAdmin):
+#     form = SchoolAdminPageForm
+
+#     list_display = ("name", "email", "created_at", "updated_at")
+#     search_fields = ("name", "email")
+#     list_filter = ("created_at",)
+#     ordering = ["-created_at"]
+#     fields = ("user", "name", "email", "password")
+#     readonly_fields = ("created_at", "updated_at")
+
+#     def save_model(self, request, obj, form, change):
+#         # Save the user and password changes (if any)
+#         obj.save()  # This triggers the custom save method in the model
+#         if form.cleaned_data.get("password"):
+#             obj.user.save()  # Save user after password change
+
+#     def get_readonly_fields(self, request, obj=None):
+#         if obj:  # If the object already exists, make email readonly
+#             return self.readonly_fields + ("email",)
+#         return self.readonly_fields
 
 
-admin.site.register(AdminUser, AdminUserAdmin)
+# admin.site.register(SchoolAdmin, SchoolAdminAdmin)

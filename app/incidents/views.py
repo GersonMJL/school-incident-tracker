@@ -58,7 +58,7 @@ def create_incident_report(request):
         form = IncidentReportForm(request.POST)
         if form.is_valid():
             # Save the incident report
-            form.instance.created_by = request.user
+            form.instance.created_by = request.user.school_admin_profile
             incident_report = form.save()
 
             try:

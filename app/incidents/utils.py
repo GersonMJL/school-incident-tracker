@@ -125,7 +125,7 @@ def send_incident_report_email(incident_report: IncidentReport, pdf_buffer: Byte
     # This is a placeholder - you'll need to modify based on your specific requirements
     email_buffer = BytesIO(pdf_buffer.getvalue()).getvalue()
 
-    recipient_email = [incident_report.created_by.email]
+    recipient_email = [incident_report.created_by.user.email]
 
     if incident_report.student.email:
         recipient_email.append(incident_report.student.email)

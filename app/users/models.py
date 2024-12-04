@@ -1,10 +1,15 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
-class AdminUser(AbstractUser):
-    is_email_verified = models.BooleanField(default=False)
-    confirmation_code = models.CharField(max_length=64, blank=True, null=True)
+class SchoolAdmin(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="school_admin_profile"
+    )
+    name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.username
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []

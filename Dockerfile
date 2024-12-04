@@ -1,30 +1,39 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12
+FROM python:3.11-slim AS base
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    POETRY_VIRTUALENVS_CREATE=false \
+    POETRY_NO_INTERACTION=1
 
 # Set the working directory inside the container
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    curl \
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 -
+RUN pip install --no-cache-dir poetry
 
-ENV PATH="${PATH}:/root/.local/bin"
+# Copy dependency management files
+COPY poetry.lock pyproject.toml /app/
 
-# Copy the application code
-COPY . .
+# Install Python dependencies
+RUN poetry install --no-ansi
 
-# Install dependencies
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi
+# Copy application code
+COPY ./app .
 
-RUN python app/manage.py collectstatic --noinput
+# Expose port 8000 for the Django app
+EXPOSE 8000
+
+# Use a non-root user for security (optional)
+RUN useradd -m appuser
+USER appuser
 
 # Command to run the Django app
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "app.wsgi:application"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

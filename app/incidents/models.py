@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import SchoolAdmin
+
 
 class Student(models.Model):
     name = models.CharField(max_length=255)
@@ -28,9 +30,7 @@ class IncidentReport(models.Model):
         max_length=255, null=True, blank=True
     )  # URL to PDF file
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(
-        "users.AdminUser", on_delete=models.SET_NULL, null=True
-    )
+    created_by = models.ForeignKey(SchoolAdmin, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return f"Incident for {self.student.name} - {self.incident_type.name}"
