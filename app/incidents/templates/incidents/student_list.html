@@ -13,6 +13,9 @@
           <tr>
             <th>Nome</th>
             <th>Matrícula</th>
+            <th>E-mail</th>
+            <th>E-mail de Responsável</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -20,6 +23,17 @@
           <tr>
             <td>{{ student.name }}</td>
             <td>{{ student.school_id }}</td>
+            <td>{{ student.email }}</td>
+            <td>{{ student.parent_email }}</td>
+            <td>
+              <!-- Edit Button -->
+              <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"
+                data-student-id="{{ student.id }}" data-student-name="{{ student.name }}"
+                data-student-school-id="{{ student.school_id }}" data-student-email="{{ student.email }}"
+                data-student-parent-email="{{ student.parent_email }}">
+                Editar
+              </button>
+            </td>
           </tr>
           {% endfor %}
         </tbody>
@@ -27,4 +41,68 @@
     </div>
   </div>
 </div>
+
+<!-- Edit Student Modal -->
+<div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editStudentModalLabel">Editar Estudante</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="editStudentForm" method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="studentName" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="studentName" name="name" required>
+          </div>
+          <div class="mb-3">
+            <label for="studentSchoolId" class="form-label">Matrícula</label>
+            <input type="text" class="form-control" id="studentSchoolId" name="school_id" required>
+          </div>
+          <div class="mb-3">
+            <label for="studentEmail" class="form-label">E-mail</label>
+            <input type="email" class="form-control" id="studentEmail" name="email">
+          </div>
+          <div class="mb-3">
+            <label for="studentParentEmail" class="form-label">E-mail de Responsável</label>
+            <input type="email" class="form-control" id="studentParentEmail" name="parent_email">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const editStudentUrlTemplate = "{% url 'edit_student' 0 %}".replace("0", "{id}");
+
+  // Populate the modal with the student data when the Edit button is clicked
+  document.addEventListener('DOMContentLoaded', () => {
+    const editStudentModal = document.getElementById('editStudentModal');
+    editStudentModal.addEventListener('show.bs.modal', (event) => {
+      const button = event.relatedTarget;
+      const studentId = button.getAttribute('data-student-id');
+      const studentName = button.getAttribute('data-student-name');
+      const studentSchoolId = button.getAttribute('data-student-school-id');
+      const studentEmail = button.getAttribute('data-student-email');
+      const studentParentEmail = button.getAttribute('data-student-parent-email');
+
+      // Populate the form fields
+      const form = document.getElementById('editStudentForm');
+      form.action = editStudentUrlTemplate.replace("{id}", studentId); // Adjust your URL pattern accordingly
+      form.querySelector('#studentName').value = studentName;
+      form.querySelector('#studentSchoolId').value = studentSchoolId;
+      form.querySelector('#studentEmail').value = studentEmail;
+      form.querySelector('#studentParentEmail').value = studentParentEmail;
+    });
+  });
+</script>
 {% endblock %}

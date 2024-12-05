@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from .models import Student, IncidentType, IncidentReport
 from .forms import StudentForm, IncidentTypeForm, IncidentReportForm
 from django.core.paginator import Paginator
@@ -134,3 +135,16 @@ def incident_list(request):
         "title": "Incident Reports",
     }
     return render(request, "incidents/incident_list.html", context)
+
+
+@login_required
+def edit_student(request, id):
+    student = get_object_or_404(Student, id=id)
+    if request.method == "POST":
+        form = StudentForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Estudante atualizado com sucesso.")
+    else:
+        form = StudentForm(instance=student)
+    return redirect("list_students")
