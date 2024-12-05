@@ -1,17 +1,20 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import (
+    authenticate,
+    get_user_model,
+    login,
+    update_session_auth_hash,
+)
+from django.contrib.auth.forms import AuthenticationForm
 from django.db import transaction
-
-from users.models import SchoolAdmin
+from django.shortcuts import redirect, render
 from users.forms import (
     CustomAuthenticationForm,
-    SchoolAdminCreationForm,
-    PasswordChangeForm,
     CustomUserCreationForm,
+    PasswordChangeForm,
+    SchoolAdminCreationForm,
 )
+from users.models import SchoolAdmin
 
 User = get_user_model()
 

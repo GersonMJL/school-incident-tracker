@@ -1,6 +1,7 @@
-import boto3
-import os
 import logging
+import os
+
+import boto3
 from django.conf import settings
 
 logger = logging.getLogger(__name__)

@@ -1,13 +1,14 @@
 import io
 from io import BytesIO
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
 import boto3
 import pytz
-from django.core.mail import EmailMessage
 from django.conf import settings
+from django.core.mail import EmailMessage
 from incidents.models import IncidentReport
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
 
 def generate_incident_report_pdf(incident_report: IncidentReport):
@@ -37,10 +38,10 @@ def generate_incident_report_pdf(incident_report: IncidentReport):
 
     # Prepare the content
     content = [
-        Paragraph(f"Relatório de ocorrência", styles["Title"]),
+        Paragraph("Relatório de ocorrência", styles["Title"]),
         Spacer(1, 12),
         Paragraph(
-            f"Aluno:",
+            "Aluno:",
             bold_style,
         ),
         Paragraph(
@@ -49,7 +50,7 @@ def generate_incident_report_pdf(incident_report: IncidentReport):
         ),
         Spacer(1, 12),
         Paragraph(
-            f"Tipo de ocorrência:",
+            "Tipo de ocorrência:",
             bold_style,
         ),
         Paragraph(
@@ -57,11 +58,11 @@ def generate_incident_report_pdf(incident_report: IncidentReport):
             styles["Normal"],
         ),
         Spacer(1, 12),
-        Paragraph(f"Descrição:", bold_style),
+        Paragraph("Descrição:", bold_style),
         Paragraph(f"{incident_report.description}", styles["Normal"]),
         Spacer(1, 12),
         Paragraph(
-            f"Data de geração de relatório:",
+            "Data de geração de relatório:",
             bold_style,
         ),
         Paragraph(f"{localized_created_at.strftime('%d/%m/%Y')}", styles["Normal"]),

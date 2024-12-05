@@ -1,17 +1,16 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
-from .models import Student, IncidentType, IncidentReport
-from .forms import StudentForm, IncidentTypeForm, IncidentReportForm
-from django.core.paginator import Paginator
 from django.contrib import messages
-from .utils import (
-    generate_incident_report_pdf,
-    upload_pdf_to_s3,
-    send_incident_report_email,
-)
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import IncidentReport
+from django.shortcuts import get_object_or_404, redirect, render
+from incidents.forms import IncidentReportForm, IncidentTypeForm, StudentForm
+from incidents.models import IncidentReport, IncidentType, Student
+from incidents.utils import (
+    generate_incident_report_pdf,
+    send_incident_report_email,
+    upload_pdf_to_s3,
+)
+
 from .forms import IncidentFilterForm
 
 

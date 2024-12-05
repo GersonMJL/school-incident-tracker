@@ -1,8 +1,3 @@
-from users.models import SchoolAdmin
-from django.contrib import admin
-from users.forms import SchoolAdminPageForm
-
-
 # class SchoolAdminAdmin(admin.ModelAdmin):
 #     form = SchoolAdminPageForm
 

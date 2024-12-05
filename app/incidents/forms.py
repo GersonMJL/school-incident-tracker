@@ -1,7 +1,8 @@
-from django import forms
-from .models import Student, IncidentType, IncidentReport
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django import forms
+
+from .models import IncidentReport, IncidentType, Student
 
 
 class StudentForm(forms.ModelForm):

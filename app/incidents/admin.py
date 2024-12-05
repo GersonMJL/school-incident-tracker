@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Student, IncidentType, IncidentReport
+
+from .models import IncidentReport, IncidentType, Student
 
 admin.site.register(Student)
 admin.site.register(IncidentType)
